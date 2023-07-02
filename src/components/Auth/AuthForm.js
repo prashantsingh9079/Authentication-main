@@ -9,8 +9,8 @@ const AuthForm = () => {
 
   const [isLogin, setIsLogin] = useState(true);
   const [req, setReq] = useState(false)
-  const [e,setE] = useState(null);
-  var msg=''
+  const [e, setE] = useState(null);
+  var msg = ''
 
   const switchAuthModeHandler = () => {
     setIsLogin((prevState) => !prevState);
@@ -21,9 +21,28 @@ const AuthForm = () => {
     event.preventDefault();
     const enteredEmail = emailRef.current.value;
     const enteredPassword = passwordRef.current.value;
-    
+
 
     if (isLogin) {
+      try {
+        const response = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyD-LkVptadQXkNSeaonyQu95YCgw4tnlEk", { method: 'POST', body: JSON.stringify({ email: enteredEmail, password: enteredPassword, returnSecureToken: true }), headers: { 'Content-Type': 'application/json' } })
+        if (response.ok === false) {
+          const detailByServer = await response.json()
+          console.log(detailByServer.error.message)
+          alert(detailByServer.error.message)
+          emailRef.current.value='';
+          passwordRef.current.value=''
+        }
+        else {
+          const dataFromServer = await response.json()
+          console.log(dataFromServer)
+          console.log("id token below...")
+          console.log(dataFromServer.idToken)
+        }
+      } catch (error) {
+        console.log("error below")
+        console.log(error.message)
+      }
 
     }
     else {
@@ -44,25 +63,28 @@ const AuthForm = () => {
             }
           }
         );
-          if(response.status ===false)
-          {
-            throw Error("something went wrong...")
-          }
-          else
-          {
-             const detailByServer  = await response.json()
-             console.log(detailByServer)
-          }
+        console.log(response)
         
+        if (response.ok === false) {
+          const detailByServer = await response.json()
+          console.log(detailByServer.error.message)
+          alert(detailByServer.error.message)
+          emailRef.current.value='';
+          passwordRef.current.value=''
+        }
+        else {
+          const detailByServer = await response.json()
+          console.log(detailByServer)
+        }
+
       }
-      catch(error)
-      {
+      catch (error) {
         setE(true)
         console.log(error.message)
         msg = error.message;
       }
       setReq(false)
-  }
+    }
   }
 
 
@@ -82,8 +104,8 @@ const AuthForm = () => {
             ref={passwordRef}
             required
           />
-          {req?'sending request...':''}
-          {e ? {msg}:''}
+          {req ? 'sending request...' : ''}
+          {e ? { msg } : ''}
         </div>
         <div className={classes.actions}>
           <button
@@ -91,7 +113,7 @@ const AuthForm = () => {
             className={classes.toggle}
             onClick={switchAuthModeHandler}
           >
-            
+
             {isLogin ? 'Create new account' : 'Login with existing account'}
           </button>
           <button type='submit'>Save</button>

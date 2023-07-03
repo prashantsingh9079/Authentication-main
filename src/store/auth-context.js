@@ -16,6 +16,11 @@ export  const AuthContextProvider = (props) =>
     {
         setToken(token);
         localStorage.setItem("token",token)
+        setTimeout(()=>{
+            localStorage.removeItem('token')
+            setToken(initailToken)
+        },5000)
+        console.log("timer will expire in 5 second")
     }
     function logoutHandler()
     {

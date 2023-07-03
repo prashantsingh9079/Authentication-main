@@ -1,8 +1,11 @@
-import { useState, useRef } from 'react';
+import { useState, useRef,useContext } from 'react';
+import AuthContext from '../../store/auth-context';
 
 import classes from './AuthForm.module.css';
 
 const AuthForm = () => {
+
+  const authCtx = useContext(AuthContext);
 
   const emailRef = useRef();
   const passwordRef = useRef();
@@ -36,6 +39,7 @@ const AuthForm = () => {
         else {
           const dataFromServer = await response.json()
           console.log(dataFromServer)
+          authCtx.login(dataFromServer.idToken)
           console.log("id token below...")
           console.log(dataFromServer.idToken)
         }
@@ -74,7 +78,8 @@ const AuthForm = () => {
         }
         else {
           const detailByServer = await response.json()
-          console.log(detailByServer)
+          console.log(detailByServer.idToken)
+          authCtx.login(detailByServer.idToken)
         }
 
       }

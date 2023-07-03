@@ -28,7 +28,9 @@ const AuthForm = () => {
 
     if (isLogin) {
       try {
+        
         const response = await fetch("https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyD-LkVptadQXkNSeaonyQu95YCgw4tnlEk", { method: 'POST', body: JSON.stringify({ email: enteredEmail, password: enteredPassword, returnSecureToken: true }), headers: { 'Content-Type': 'application/json' } })
+        
         if (response.ok === false) {
           const detailByServer = await response.json()
           console.log(detailByServer.error.message)
@@ -42,6 +44,7 @@ const AuthForm = () => {
           authCtx.login(dataFromServer.idToken)
           console.log("id token below...")
           console.log(dataFromServer.idToken)
+          
         }
       } catch (error) {
         console.log("error below")
